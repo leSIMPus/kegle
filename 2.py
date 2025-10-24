@@ -25,27 +25,18 @@ print("\nПроверка на пропущенные значения:")
 print(df.isnull().sum())
 
 if df.isnull().sum().sum() == 0:
-    print("\nОшибка: в данных нет пропусков. Создаём искусственные пропуски для демонстрации...")
-    # Сгенерируем пропуски случайно в 1% данных
+    print("\nОшибка: в данных нет пропусков. Создаём искусственные пропуски для демонстрации.")
     df.loc[df.sample(frac=0.01).index, 'reading score'] = np.nan
 
-# Повторная проверка
-print("\nПосле возможной генерации пропусков:")
+print("\nПосле генерации пропусков:")
 print(df.isnull().sum())
 
-# Заполним пропуски средним значением по столбцу
 df['reading score'].fillna(df['reading score'].mean(), inplace=True)
 
-#4. Преобразование категориальных данных
+#4. Преобразование данных
 cat_cols = df.select_dtypes(include=['object']).columns
 print(f"\nКатегориальные признаки: {cat_cols.tolist()}")
 
-if len(cat_cols) == 0:
-    print("Ошибка: нет категориальных признаков для кодирования. Добавим искусственный пример.")
-    df['gender'] = np.random.choice(['male', 'female'], size=len(df))
-    cat_cols = ['gender']
-
-# Преобразуем категориальные признаки в числовые
 encoder = LabelEncoder()
 for col in cat_cols:
     df[col] = encoder.fit_transform(df[col])
@@ -56,7 +47,7 @@ sns.heatmap(df.corr(), annot=True, cmap='coolwarm', fmt=".2f")
 plt.title("Корреляция признаков")
 plt.show()
 
-#6. Нормализация числовых признаков
+#6. Стандартизация числовых признаков
 num_cols = df.select_dtypes(include=['int64', 'float64']).columns
 
 scaler = StandardScaler()
